@@ -1,0 +1,37 @@
+name: CyayoLuckRNG
+version: 2.4.0
+main: id.seria.cyayoluckrng.CyayoLuckRNG
+api-version: 1.13
+authors: [Cyayo]
+depend: [MMOItems, MythicLib, PlaceholderAPI]
+
+commands:
+  luckrng:
+    description: CyayoLuckRNG main command
+    usage: /luckrng <subcommand> [args...]
+    aliases: [lrng]
+
+permissions:
+  luckrng.use:
+    default: false
+  luckrng.run:
+    default: op
+  luckrng.event:
+    default: op
+  luckrng.abuse:
+    default: op
+  luckrng.drop:
+    default: op
+  luckrng.vp:
+    default: op
+  luckrng.reload:
+    default: op
+  luckrng.admin:
+    default: op
+    children:
+      luckrng.use: true
+      luckrng.event: true
+      luckrng.abuse: true
+      luckrng.drop: true
+      luckrng.vp: true
+      luckrng.reload: true

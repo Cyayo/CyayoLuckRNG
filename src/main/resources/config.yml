@@ -1,0 +1,27 @@
+prefix: "&7[&6LuckRNG&7]"
+maxluckvar: 1000
+default-luck: 5
+luckcap: 0.75
+extra-luck-placeholders:
+  - "%auraskills_luck%"
+  - "%mmoitems_stat_custom-myluck%"
+potion-luck-placeholder: "%some_potion_luck_placeholder%"
+permission-luck:
+  luckrng.luck.10: 10
+  luckrng.luck.20: 20
+  luckrng.luck.30: 30
+  luckrng.luck.40: 40
+  luckrng.luck.50: 50
+vpluck-duration: 3600
+vpluck-value: 100
+bossbar-luck-color: PURPLE
+bossbar-drop-color: PURPLE
+bossbar-vpluck-color: YELLOW
+sounds:
+  event-start: "minecraft:ui.toast.challenge_complete"
+  event-stop: ""
+bossbars:
+  luck-multiplier: "&f{value}x Luck | {time}"
+  admin-abuse: "&f+{value}% Luck | {time}"
+  double-drop: "&f{value}x Drop | {time}"
+  vpluck: "&6VoteParty Luck +{value}% | {time}"

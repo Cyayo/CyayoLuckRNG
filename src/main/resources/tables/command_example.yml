@@ -1,0 +1,19 @@
+name: "Command Box"
+type: command
+use-luck: true
+use-double-drop: false
+rolls-min: 1
+rolls-max: 1
+receive-message: "&6[Gacha] &7Kamu mendapatkan &e{item}&7!"
+items:
+  - command: "give {player} diamond 1"
+    display: "1x Diamond"
+    base: 100
+    broadcast: "&6{player} &fberhasil mendapatkan Diamond dari Command Box!"
+  - command: "give {player} gold_ingot 5"
+    display: "5x Gold Ingot"
+    base: 300
+  - command: "eco give {player} 1000"
+    display: "$1000"
+    base: 50
+    broadcast: "&6{player} &fberhasil memenangkan Jackpot &e$1000&f!"

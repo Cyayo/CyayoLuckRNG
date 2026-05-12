@@ -1,0 +1,27 @@
+name: "Agate Ore"
+type: mmoitems
+use-luck: true
+use-double-drop: true
+rolls-min: 1
+rolls-max: 2
+receive-message: "&6[Drop] &7Kamu mendapatkan &e{item}&7!"
+items:
+  - type: MINING_MATERIAL
+    id: PREMIUM_AGATE
+    base: 30
+    broadcast: "&6[RNG] &e{player} &7mendapatkan &6{amount}x Premium Agate!"
+  - type: MINING_MATERIAL
+    id: FLAWLESS_AGATE
+    base: 20
+  - type: MINING_MATERIAL
+    id: POLISHED_AGATE
+    base: 15
+  - type: MINING_MATERIAL
+    id: ORDINARY_AGATE
+    base: 10
+  - type: MINING_MATERIAL
+    id: ROUGH_AGATE
+    base: 5
+  - type: MINING_MATERIAL
+    id: FRAGMENT_AGATE
+    base: 1
