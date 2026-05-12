@@ -9,19 +9,20 @@
 ```
 
 ### 1. Cara Kerja Sistem Luck
-- Setiap player memiliki statistik **Luck** yang mempengaruhi hasil RNG (contoh: Drop Rate, Gacha, Forge).
-- Luck bisa didapat dari Permission, Potion Effect, atau Event Global.
-- Plugin ini menyediakan API dan Placeholder yang bisa digunakan oleh plugin lain untuk mengambil nilai Luck player.
+- Statistik **Luck** dihitung dari: `Default (5)` + `Permission` + `Potion` + `Multiplier` + `Extra Placeholders`.
+- Hasil akhir akan dibatasi oleh **Luck Cap** (default 0.75) agar tidak terlalu OP.
 
-### 2. Cara Menjalankan Event
-- **Luck Event:** Gunakan `/lrng event 2.0 3600 Global` untuk menggandakan Luck semua player selama 1 jam.
-- **Double Drop:** Gunakan `/lrng drop 2.0 1800 Global` untuk mengaktifkan event Double Drop.
-- **Admin Abuse:** Fitur khusus untuk mengatur Luck player secara spesifik untuk durasi tertentu.
+### 2. Cara Mengatur Bonus Permission
+Kamu bisa menambah atau mengubah bonus luck dari permission di `config.yml`:
+```yaml
+permission-luck:
+  luckrng.luck.special: 75  # Player dengan izin ini dapat +75 Luck
+```
 
-### 3. Integrasi Placeholder
-Gunakan PlaceholderAPI untuk menampilkan status luck di Scoreboard atau Chat:
-- `%luckrng_luck_total%` untuk melihat total luck saat ini.
-- `%luckrng_luck_multiplier%` untuk melihat multiplier yang sedang aktif.
+### 3. Integrasi PAPI (Extra Luck)
+Plugin ini bisa mengambil nilai luck dari plugin lain secara otomatis:
+- Menarik luck dari **AuraSkills** (`%auraskills_luck%`).
+- Menarik luck dari Custom Stat **MMOItems**.
 
 ```text
 =========================================
@@ -32,29 +33,39 @@ USER COMMAND:
 /lrng info                             > Cek detail statistik luck pribadimu.
 
 ADMIN COMMAND:
-/lrng run <table> <bonus> <player>     > Menjalankan RNG table untuk player.
-/lrng resetcount <table|*> <player>    : Reset jumlah run (counter) player.
-/lrng reload                           : Reload konfigurasi & pesan plugin.
-/lrng event <mult> <sec> <org>         : Mulai Event Luck Multiplier.
-/lrng eventend                         : Hentikan Event Luck Multiplier.
-/lrng abuse <luck> <sec> <cap> <org>   : Mulai Admin Abuse Luck Event.
-/lrng abuseend                         : Hentikan Admin Abuse Luck.
-/lrng drop <mult> <sec> <org>          : Mulai Event Double Drop Multiplier.
-/lrng dropend                          : Hentikan Event Double Drop.
-/lrng vp                               : Mulai VoteParty Luck tambahan.
-/lrng vpend                            : Hentikan VoteParty Luck.
+/lrng run <table> <bonus> <player>     > Jalankan RNG table untuk player.
+/lrng resetcount <table|*> <player>    : Reset counter run player.
+/lrng reload                           : Reload config & messages.
+/lrng event <mult> <sec> <org>         : Mulai Global Luck Event.
+/lrng eventend                         : Stop Global Luck Event.
+/lrng abuse <luck> <sec> <cap> <org>   : Admin Abuse Luck spesifik.
+/lrng abuseend                         : Stop Admin Abuse.
+/lrng drop <mult> <sec> <org>          : Mulai Event Double Drop.
+/lrng dropend                          : Stop Event Double Drop.
+/lrng vp                               : Jalankan VoteParty Luck.
+/lrng vpend                            : Stop VoteParty Luck.
 
 PERMISSIONS:
-luckrng.use                            > Izin untuk /lrng info.
-luckrng.run                            > Izin untuk /lrng run (NPC/Console).
-luckrng.reload                         > Izin untuk /lrng reload & resetcount.
-luckrng.event                          > Izin untuk /lrng event.
-luckrng.abuse                          > Izin untuk /lrng abuse.
-luckrng.drop                           > Izin untuk /lrng drop.
-luckrng.vp                             > Izin untuk /lrng vp.
+luckrng.use                            > Izin /lrng info.
+luckrng.run                            > Izin /lrng run (NPC/Console).
+luckrng.event                          > Izin /lrng event.
+luckrng.abuse                          > Izin /lrng abuse.
+luckrng.drop                           > Izin /lrng drop.
+luckrng.vp                             > Izin /lrng vp.
+luckrng.reload                         > Izin /lrng reload & resetcount.
 luckrng.admin                          > Master permission (Akses Semua).
-luckrng.luck.<amount>                  > Bonus luck permanen dari permission.
-(Contoh: luckrng.luck.10, luckrng.luck.50)
+
+[!] CUSTOM LUCK PERMISSION:
+Kamu bisa menambah permission luck baru sesukamu.
+
+CARA MENGATUR:
+Buka 'config.yml' di bagian 'permission-luck'. Tambahkan baris baru
+dengan format 'node.permission: nilai_luck'.
+Contoh: 'luckrng.luck.vip: 50'
+
+FUNGSINYA:
+Memberikan bonus statistik Luck permanen kepada player berdasarkan
+Rank atau Permission yang mereka miliki (misal: Rank MVP +20 Luck).
 ```
 
 ```text
@@ -62,17 +73,19 @@ luckrng.luck.<amount>                  > Bonus luck permanen dari permission.
              PLACEHOLDERS
 =========================================
 
-%luckrng_luck_total%          > Total luck (termasuk multiplier).
-%luckrng_luck_total_capped%   > Total luck setelah dibatasi cap.
-%luckrng_count_<table>%       > Total run player di table tersebut.
-%luckrng_luck_multiplier%     > Nilai multiplier luck aktif.
+%luckrng_luck_total%          > Total luck saat ini.
+%luckrng_luck_total_capped%   > Total luck setelah dibatasi Cap.
+%luckrng_count_<table>%       > Total berapa kali player run table.
+%luckrng_luck_multiplier%     > Multiplier event yang aktif.
 %luckrng_luck_multiplier_time%> Sisa waktu event multiplier.
-%luckrng_top_<table>_<rank>_name% > Nama player di rank leaderboard.
+%luckrng_aaluck%              > Nilai Admin Abuse luck aktif.
+%luckrng_ddrop%               > Nilai Double Drop aktif.
+%luckrng_vpluck%              > Nilai VoteParty luck aktif.
 ```
 
-### 🚀 Plugin Features
-- ✨ **Dynamic Luck System** - Hitung luck dari berbagai sumber secara akurat.
-- 📅 **Global Events** - Mulai event Luck atau Drop Multiplier dengan satu command.
-- 🏆 **Leaderboard Support** - Pantau siapa player paling beruntung di servermu.
-- 🔌 **API Ready** - Mudah diintegrasikan dengan plugin RPG lainnya.
-- 📊 **Capped Luck** - Atur batas maksimal luck agar ekonomi server tetap stabil.
+### 🚀 Advanced Features
+- 📊 **BossBar HUD** - Menampilkan durasi event (Luck, Drop, VP) secara visual di atas layar.
+- 🔗 **Bridge Integration** - Mengambil data luck dari AuraSkills, MMOItems, dan plugin lainnya.
+- 🗳️ **VoteParty Synergy** - Bonus luck otomatis saat VoteParty mencapai goal.
+- 🛡️ **Anti-Abuse System** - Batasi keberuntungan player dengan sistem Capping yang cerdas.
+- 🎵 **Notification Sounds** - Suara notifikasi saat event dimulai atau berakhir.
