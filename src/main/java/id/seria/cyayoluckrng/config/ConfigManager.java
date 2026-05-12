@@ -33,8 +33,9 @@ public class ConfigManager {
     private final Map<String,String> messages   = new HashMap<>();
     private final Map<String,String> broadcasts = new HashMap<>();
     private final Map<String,String> bossbars   = new HashMap<>();
-    private final Map<String,String> luckinfo   = new HashMap<>();
+    private final List<String> luckinfo        = new ArrayList<>();
     private final Map<String,RngTable> tables   = new LinkedHashMap<>();
+    private FileConfiguration statsGuiConfig;
 
     public ConfigManager(CyayoLuckRNG plugin) { this.plugin = plugin; }
 
@@ -69,7 +70,13 @@ public class ConfigManager {
         FileConfiguration msgCfg = YamlConfiguration.loadConfiguration(msgFile);
         loadSection(msgCfg, "broadcasts", broadcasts);
         loadSection(msgCfg, "messages",   messages);
-        loadSection(msgCfg, "luckinfo",   luckinfo);
+        
+        luckinfo.clear();
+        luckinfo.addAll(msgCfg.getStringList("luckinfo.text"));
+
+        File guiFile = new File(plugin.getDataFolder(), "stats-gui.yml");
+        if (!guiFile.exists()) plugin.saveResource("stats-gui.yml", false);
+        statsGuiConfig = YamlConfiguration.loadConfiguration(guiFile);
 
         tables.clear();
         File dir = new File(plugin.getDataFolder(), "tables");
@@ -175,7 +182,7 @@ public class ConfigManager {
     public String msg(String key, String... kv) { return color(msgRaw(key, kv)); }
     public String broadcast(String key, String... kv) { return color(broadcastRaw(key, kv)); }
     public String bossbar(String key, String... kv) { return color(bossbarRaw(key, kv)); }
-    public String luckinfo(String key, String... kv) { return color(luckinfoRaw(key, kv)); }
+    public List<String> getLuckInfo() { return luckinfo; }
 
     public String msgRaw(String key, String... kv) {
         String out = prefix + " " + messages.getOrDefault(key, "&c[?" + key + "]");
@@ -189,11 +196,6 @@ public class ConfigManager {
     }
     public String bossbarRaw(String key, String... kv) {
         String out = bossbars.getOrDefault(key, key);
-        for (int i = 0; i + 1 < kv.length; i += 2) out = out.replace(kv[i], kv[i + 1]);
-        return out;
-    }
-    public String luckinfoRaw(String key, String... kv) {
-        String out = luckinfo.getOrDefault(key, "");
         for (int i = 0; i + 1 < kv.length; i += 2) out = out.replace(kv[i], kv[i + 1]);
         return out;
     }
@@ -214,4 +216,5 @@ public class ConfigManager {
     public Map<String, Double> getPermissionLuck() { return permissionLuck; }
     public Map<String,RngTable> getTables()        { return tables; }
     public RngTable getTable(String k)             { return tables.get(k.toLowerCase()); }
+    public FileConfiguration getStatsGuiConfig()   { return statsGuiConfig; }
 }

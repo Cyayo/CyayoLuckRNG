@@ -20,7 +20,7 @@ public class LuckRNGTabCompleter implements TabCompleter {
         boolean con = !(sender instanceof Player);
 
         if (args.length == 1) {
-            String[] subs = {"info","run","event","eventend","abuse","abuseend","drop","dropend","vp","vpend","reload","resetcount"};
+            String[] subs = {"info","run","event","eventend","abuse","abuseend","drop","dropend","vp","vpend","reload","resetcount","stats"};
             for (String s : subs) {
                 if (!s.startsWith(args[0].toLowerCase())) continue;
                 if (s.equals("info")   && (con||sender.hasPermission("luckrng.use")))    result.add(s);
@@ -30,6 +30,7 @@ public class LuckRNGTabCompleter implements TabCompleter {
                 if ((s.equals("drop") ||s.equals("dropend"))   && (con||sender.hasPermission("luckrng.drop")))   result.add(s);
                 if ((s.equals("vp")   ||s.equals("vpend"))     && (con||sender.hasPermission("luckrng.vp")))     result.add(s);
                 if ((s.equals("reload")||s.equals("resetcount"))&&(con||sender.hasPermission("luckrng.reload"))) result.add(s);
+                if (s.equals("stats") && (con||sender.hasPermission("luckrng.admin"))) result.add(s);
             }
             return result;
         }
@@ -44,6 +45,9 @@ public class LuckRNGTabCompleter implements TabCompleter {
         if (sub.equals("resetcount") && (con||sender.hasPermission("luckrng.reload"))) {
             if (args.length==2) { result.add("*"); for (String k:plugin.getConfigManager().getTables().keySet()) if(k.startsWith(args[1].toLowerCase())) result.add(k); }
             else if (args.length==3) result.addAll(onlinePlayers(args[2]));
+        }
+        if (sub.equals("stats") && (con||sender.hasPermission("luckrng.admin"))) {
+            if (args.length==2) result.addAll(onlinePlayers(args[1]));
         }
         if (sub.equals("event") && (con||sender.hasPermission("luckrng.event"))) {
             if (args.length==2) result.addAll(Arrays.asList("2","3","5","10"));

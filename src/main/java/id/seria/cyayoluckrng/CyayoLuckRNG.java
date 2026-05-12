@@ -12,6 +12,8 @@ import id.seria.cyayoluckrng.config.RngTable;
 import id.seria.cyayoluckrng.event.EventManager;
 import id.seria.cyayoluckrng.event.EventState;
 import id.seria.cyayoluckrng.event.JoinListener;
+import id.seria.cyayoluckrng.gui.GUIListener;
+import id.seria.cyayoluckrng.gui.StatsGUI;
 import id.seria.cyayoluckrng.placeholder.LuckPlaceholder;
 import id.seria.cyayoluckrng.rng.CounterManager;
 import id.seria.cyayoluckrng.rng.LuckCalculator;
@@ -35,6 +37,7 @@ public class CyayoLuckRNG extends JavaPlugin {
         saveResource("tables/agateore.yml",        false);
         saveResource("tables/agatedeepslate.yml",  false);
         saveResource("tables/agaterawblock.yml",   false);
+        saveResource("stats-gui.yml",              false);
 
         configManager  = new ConfigManager(this);
         configManager.load();
@@ -45,8 +48,10 @@ public class CyayoLuckRNG extends JavaPlugin {
         luckCalculator = new LuckCalculator(this);
         rngEngine      = new RngEngine(this);
         counterManager = new CounterManager();
+        counterManager.load(new java.io.File(getDataFolder(), "counters.yml"));
 
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
+        getServer().getPluginManager().registerEvents(new GUIListener(), this);
         new LuckPlaceholder(this).register();
         getCommand("luckrng").setTabCompleter(new LuckRNGTabCompleter(this));
         getLogger().info("CyayoLuckRNG v2.4.0 aktif!");
@@ -56,6 +61,9 @@ public class CyayoLuckRNG extends JavaPlugin {
     public void onDisable() {
         if (adventure != null) { adventure.close(); adventure = null; }
         eventManager.stopTick();
+        if (counterManager != null) {
+            counterManager.save(new java.io.File(getDataFolder(), "counters.yml"));
+        }
         getLogger().info("CyayoLuckRNG dinonaktifkan.");
     }
 
@@ -91,19 +99,21 @@ public class CyayoLuckRNG extends JavaPlugin {
             double potionLuck = luckCalculator.parsePapi(p, "%luckrng_luck_potion%");
             double permLuck   = luckCalculator.getPermissionLuck(p);
             double globalLuck = cfg().getDefaultLuck();
-            msg(p, cfg().luckinfo("header"));
-            msg(p, cfg().luckinfo("title"));
-            msg(p, cfg().luckinfo("header"));
-            msg(p, cfg().luckinfo("global-luck",  "{value}", fv(globalLuck)));
-            msg(p, cfg().luckinfo("extra-luck",   "{value}", fv(extra)));
-            msg(p, cfg().luckinfo("permission-luck", "{value}", fv(permLuck)));
-            msg(p, cfg().luckinfo("potion-luck", "{value}", fv(potionLuck)));
-            msg(p, cfg().luckinfo("event-luck",  "{value}", String.valueOf((int)st.aaluck), "{time}", eventManager.formatTime(st.aaluckTime)));
-            msg(p, cfg().luckinfo("vpluck",      "{value}", String.valueOf((int)st.vpluck)));
-            msg(p, cfg().luckinfo("multiplier",  "{value}", String.valueOf((int)st.luckMultiplier), "{time}", eventManager.formatTime(st.luckMultiplierTime)));
-            msg(p, cfg().luckinfo("divider"));
-            msg(p, cfg().luckinfo("total",       "{value}", fv(rawLuck), "{cap}", String.valueOf(cfg().getMaxLuckVar())));
-            msg(p, cfg().luckinfo("header"));
+            for (String line : cfg().getLuckInfo()) {
+                String out = line
+                    .replace("{global}", fv(globalLuck))
+                    .replace("{base}",   fv(extra))
+                    .replace("{perm}",   fv(permLuck))
+                    .replace("{potion}", fv(potionLuck))
+                    .replace("{event}",  String.valueOf((int)st.aaluck))
+                    .replace("{event_time}", eventManager.formatTime(st.aaluckTime))
+                    .replace("{vp}",     String.valueOf((int)st.vpluck))
+                    .replace("{mult}",   String.valueOf((int)st.luckMultiplier))
+                    .replace("{mult_time}", eventManager.formatTime(st.luckMultiplierTime))
+                    .replace("{total}",  fv(rawLuck))
+                    .replace("{cap}",    String.valueOf(cfg().getMaxLuckVar()));
+                msg(p, out);
+            }
             return true;
         }
 
@@ -180,6 +190,19 @@ public class CyayoLuckRNG extends JavaPlugin {
             eventManager.stopVpLuck(); return true;
         }
 
+        if (sub.equals("stats")) {
+            if (!hasPerm(sender,"luckrng.admin")) { msg(sender, cfg().msg("no-permission")); return true; }
+            if (args.length < 2) { msg(sender, cfg().msg("stats-usage")); return true; }
+            if (!(sender instanceof Player)) { msg(sender, cfg().msg("only-player")); return true; }
+            
+            Player target = Bukkit.getPlayerExact(args[1]);
+            if (target == null) { msg(sender, cfg().msg("player-not-found")); return true; }
+
+            Player p = (Player) sender;
+            p.openInventory(new StatsGUI(this, target).getInventory());
+            return true;
+        }
+
         sendHelp(sender);
         return true;
     }
@@ -199,6 +222,7 @@ public class CyayoLuckRNG extends JavaPlugin {
         if (hasPerm(s,"luckrng.abuse"))  msg(s, cfg().color("  &e/luckrng abuse <luck> <detik> <cap> <org> | /luckrng abuseend"));
         if (hasPerm(s,"luckrng.drop"))   msg(s, cfg().color("  &e/luckrng drop <mult> <detik> <org> | /luckrng dropend"));
         if (hasPerm(s,"luckrng.vp"))     msg(s, cfg().color("  &e/luckrng vp | /luckrng vpend"));
+        if (hasPerm(s,"luckrng.admin"))  msg(s, cfg().color("  &e/luckrng stats <player>"));
         if (hasPerm(s,"luckrng.reload")) msg(s, cfg().color("  &e/luckrng reload"));
     }
 

@@ -90,6 +90,7 @@ public class RngEngine {
 
         // Counter increment 1x per run (bukan per roll)
         plugin.getCounterManager().increment(player.getUniqueId(), table.getKey());
+        plugin.getCounterManager().save(new java.io.File(plugin.getDataFolder(), "counters.yml"));
     }
 
     private void queueMessage(Player player, RngTable table, RngTable.RngEntry entry, int amount, String display) {
