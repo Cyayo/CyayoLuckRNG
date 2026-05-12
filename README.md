@@ -1,6 +1,6 @@
-# 🍀 CyayoLuckRNG - RNG System with Luck Multiplier
+# 🍀 CyayoLuckRNG - Dynamic Probability System
 
-"Kendalikan keberuntungan, kuasai setiap putaran RNG. Sistem luck dinamis yang terintegrasi penuh untuk pengalaman RPG yang lebih adil dan menantang."
+"Sistem keberuntungan dinamis untuk servermu. Kontrol probabilitas drop dan event dengan presisi tinggi."
 
 ```text
 =========================================
@@ -26,7 +26,7 @@ Plugin ini bisa mengambil nilai luck dari plugin lain secara otomatis:
 
 ```text
 =========================================
-      CYAYOLUCKRNG - COMMANDS & PERMS
+     CYAYOLUCKRNG - COMMANDS & PERMS
 =========================================
 
 USER COMMAND:
@@ -84,8 +84,11 @@ Rank atau Permission yang mereka miliki (misal: Rank MVP +20 Luck).
 ```
 
 ### 🚀 Advanced Features
-- 📊 **BossBar HUD** - Menampilkan durasi event (Luck, Drop, VP) secara visual di atas layar.
-- 🔗 **Bridge Integration** - Mengambil data luck dari AuraSkills, MMOItems, dan plugin lainnya.
-- 🗳️ **VoteParty Synergy** - Bonus luck otomatis saat VoteParty mencapai goal.
-- 🛡️ **Anti-Abuse System** - Batasi keberuntungan player dengan sistem Capping yang cerdas.
-- 🎵 **Notification Sounds** - Suara notifikasi saat event dimulai atau berakhir.
+- 📈 **Dynamic Probability** - Algoritma yang menyesuaikan peluang secara dinamis berdasarkan variabel tertentu.
+- 🔗 **PAPI Support** - Dukungan penuh PlaceholderAPI untuk integrasi visual yang maksimal.
+- 🛡️ **Anti-Abuse System** - Menghindari exploit sistem keberuntungan oleh pemain.
+- ⚙️ **High Precision** - Perhitungan RNG hingga angka desimal untuk kontrol yang sangat detail.
+
+---
+
+Made with ❤️ by **Cyayo Cressiel**
